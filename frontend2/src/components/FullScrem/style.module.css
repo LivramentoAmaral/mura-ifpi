@@ -1,0 +1,44 @@
+.fullscreencarousel {
+  position: relative;
+  width: 100%;
+  height: 80%;
+  overflow: hidden;
+  background-color: black; /* Para evitar bordas visíveis ao redor da imagem */
+}
+
+.imagecontainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+.carouselimage {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit:cover; /* Garante que a imagem seja redimensionada proporcionalmente */
+}
+
+.carouseltext {
+  position: absolute;
+  bottom: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  color: white;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-size: 1.2rem;
+  text-align: center;
+}
+
+.fullscreenbutton {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 10;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
