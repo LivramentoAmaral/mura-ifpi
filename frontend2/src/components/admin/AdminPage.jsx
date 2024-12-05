@@ -91,6 +91,15 @@ const AdminPage = ({ onSave, fetchImages, images }) => {
       setError('Erro ao excluir imagem. Tente novamente.');
     }
   };
+  const handleClick = (event) => {
+    if (loading) {
+      event.preventDefault(); // Impede o redirecionamento se estiver carregando
+    } else {
+      setLoading(true);
+      setTimeout(() => {
+        setLoading(false); // Simula o término de uma ação antes de redirecionar
+      }, 1000); // Ajuste o tempo conforme necessário
+    }};
 
   return (
     <div className={style.adminpage}>
@@ -145,8 +154,15 @@ const AdminPage = ({ onSave, fetchImages, images }) => {
           {loading ? 'Carregando...' : 'Enviar Imagem'}
         </button>
       )}
-
-      <Link className={style.btnForm_home} to="/apresentar">Apresentar</Link>
+      <Link
+      to="/apresentar"
+      className={style.btnForm_home}
+      onClick={handleClick}
+    >
+      <button disabled={loading} className={style.btnForm_home}>
+        {loading ? 'Carregando...' : 'Apresentar'}
+      </button>
+    </Link>
 
       <div className={style.imagelist}>
         {images.map((img) => (
