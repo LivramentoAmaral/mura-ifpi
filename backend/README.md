@@ -10,7 +10,7 @@ This project is a simple backend for managing file uploads, built with Node.js, 
 
 In the project directory, you can run:
 
-### `npm start`
+### `npm run dev`
 
 Runs the server in development mode.\
 Open [http://localhost:5000](http://localhost:5000) to interact with the API.
