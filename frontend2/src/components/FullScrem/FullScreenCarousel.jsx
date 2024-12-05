@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import style from './style.module.css';
 import FullscreenIcon from '@mui/icons-material/Fullscreen'; 
-import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';  // Importa o ícone FullscreenExit
+import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
+import { Link } from 'react-router-dom';  // Importa o ícone FullscreenExit
 
 const FullScreenCarousel = ({ images }) => {
   const [isFullScreen, setIsFullScreen] = useState(false);
@@ -85,6 +86,7 @@ const FullScreenCarousel = ({ images }) => {
           color: 'white'
         }} />}
       </button>
+      <Link to="/">retornar a página inicial</Link>
     </div>
   );
 };
