@@ -1,12 +1,30 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import style from './style.module.css';
+import style from './style.module.css'; // Use a single styles import
+import { Link } from 'react-router-dom';
 
 const AdminPage = ({ onSave, fetchImages, images }) => {
-  const [image, setImage] = useState({ file: null, alt: '', text: '' });
+  const [image, setImage] = useState({ file: null, alt: '', text: '', preview: '' });
   const [editingImageId, setEditingImageId] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  // Função para exibir a imagem como pré-visualização antes de enviar
+  const handleImageChange = (e) => {
+    const selectedFile = e.target.files[0];
+    if (selectedFile) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImage({
+          file: selectedFile,
+          alt: image.alt,
+          text: image.text,
+          preview: reader.result, // URL da imagem para visualização
+        });
+      };
+      reader.readAsDataURL(selectedFile); // Lê a imagem e gera a URL para visualização
+    }
+  };
 
   const handleUpload = async () => {
     if (!image.file || !image.alt || !image.text) {
@@ -29,7 +47,7 @@ const AdminPage = ({ onSave, fetchImages, images }) => {
 
       // Após o upload, atualizar as imagens
       fetchImages();
-      setImage({ file: null, alt: '', text: '' });
+      setImage({ file: null, alt: '', text: '', preview: '' }); // Resetar os campos
       setLoading(false);
     } catch (error) {
       console.error('Erro ao fazer upload:', error);
@@ -38,7 +56,6 @@ const AdminPage = ({ onSave, fetchImages, images }) => {
     }
   };
 
-  // Função para editar a imagem
   const handleEdit = async () => {
     if (!editingImageId) return;
 
@@ -56,7 +73,7 @@ const AdminPage = ({ onSave, fetchImages, images }) => {
 
       fetchImages();
       setEditingImageId(null);
-      setImage({ file: null, alt: '', text: '' });
+      setImage({ file: null, alt: '', text: '', preview: '' });
       setLoading(false);
     } catch (error) {
       console.error('Erro ao editar imagem:', error);
@@ -70,7 +87,7 @@ const AdminPage = ({ onSave, fetchImages, images }) => {
       await axios.delete(`http://localhost:5000/images/${id}`);
       fetchImages(); 
     } catch (error) {
-      console.error('Erro ao excluirr imagem:', error);
+      console.error('Erro ao excluir imagem:', error);
       setError('Erro ao excluir imagem. Tente novamente.');
     }
   };
@@ -78,17 +95,26 @@ const AdminPage = ({ onSave, fetchImages, images }) => {
   return (
     <div className={style.adminpage}>
       <h2>Administração de Imagens</h2>
-      
+
       {error && <div className={style.error}>{error}</div>}
 
-      <input
-        type="file"
-        accept="image/*"
-        onChange={(e) => setImage({ ...image, file: e.target.files[0] })}
-        disabled={loading}
-        className={style.inputFile}
-        aria-label="Selecione uma imagem"
-      />
+      <div>
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleImageChange} // Função para mostrar pré-visualização
+          disabled={loading}
+          className={style.inputFile}
+          aria-label="Selecione uma imagem"
+        />
+
+        {/* Exibir a imagem após o usuário selecionar */}
+        {image.preview && (
+          <div className={style.imagePreview}>
+            <img src={image.preview} alt="Pré-visualização" className={style.previewImage} />
+          </div>
+        )}
+      </div>
 
       <input
         type="text"
@@ -120,6 +146,8 @@ const AdminPage = ({ onSave, fetchImages, images }) => {
         </button>
       )}
 
+      <Link className={style.btnForm_home} to="/apresentar">Apresentar</Link>
+
       <div className={style.imagelist}>
         {images.map((img) => (
           <div key={img.id} className={style.imageitem}>
@@ -130,7 +158,7 @@ const AdminPage = ({ onSave, fetchImages, images }) => {
               <button
                 onClick={() => {
                   setEditingImageId(img.id);
-                  setImage({ file: null, alt: img.alt, text: img.text });
+                  setImage({ file: null, alt: img.alt, text: img.text, preview: '' });
                 }}
                 className={style.btnForm}
               >
