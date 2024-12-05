@@ -1,11 +1,18 @@
 /* AdminPage.css */
+body{
+  background-color: #c3c6c587;
+}
+
+
 .adminpage {
   padding: 30px;
-  background-color: #f4f6f9;
+  background-color: #cdcdcd;
   border-radius: 10px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 10 2px 10px rgba(0, 0, 0, 0.474);
   max-width: 1200px;
   margin: 40px auto;
+  margin-bottom: 50px;
+  margin-top: 60px;
 }
 
 h1 {
@@ -46,14 +53,26 @@ input:focus {
   margin-top: 15px;
 }.btnForm_home {
   padding: 12px 18px;
-  background-color: #024227;
+  background-color: #022e5d;
   color: white;
   border: none;
   border-radius: 5px;
   font-size: 16px;
   cursor: pointer;
   transition: all 0.3s ease;
-  width: 100%;
+  width: 500px;
+  margin-top: 15px;
+}
+.btnForm_enviar {
+  padding: 12px 18px;
+  background-color: #023915;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 500px;
   margin-top: 15px;
 }
 
@@ -157,4 +176,84 @@ input:focus {
   max-width: 300px;
   max-height: 300px;
   object-fit: contain; /* Garante que a imagem mantenha a proporção ao se ajustar ao tamanho */
+}
+.div_botoes_enviar_home {
+  display: flex; /* Habilita o layout flexível */
+  gap: 30px; /* Espaçamento entre os itens */
+  margin: 0; /* Remove margens externas */
+  padding: 0; /* Remove preenchimento interno */
+  align-items: center; /* Alinha os itens verticalmente */
+  justify-content: center; /* Alinha os itens horizontalmente */
+  height: 100%; /* Garante que a altura permita alinhamento central (opcional) */
+
+}
+
+/* Já existente */
+@media (max-width: 768px) {
+  .adminpage {
+    padding: 15px;
+    margin: 10px;
+  }
+
+  input,
+  .btnForm,
+  .btnForm_home,
+  .btnForm_enviar {
+    font-size: 14px;
+    width: 100%; /* Botões ocupam largura total */
+  }
+
+  .imagelist {
+    gap: 10px;
+    justify-content: center;
+  }
+
+  .imageitem {
+    flex: 1 1 100%;
+    max-width: 200px;
+    margin: 0 auto;
+  }
+
+  .imageitem img {
+    max-width: 80px;
+    max-height: 80px;
+  }
+
+  .div_botoes_enviar_home {
+    flex-direction: column; /* Empilha os itens em telas menores */
+    gap: 20px;
+  }
+}
+
+/* Novo - Para dispositivos menores, como smartphones pequenos */
+@media (max-width: 480px) {
+  h1 {
+    font-size: 24px; /* Reduz tamanho do título */
+  }
+
+  .adminpage {
+    padding: 10px;
+    margin: 5px;
+  }
+
+  .btnForm,
+  .btnForm_home,
+  .btnForm_enviar {
+    padding: 10px 15px;
+    font-size: 12px;
+  }
+
+  .imageitem {
+    max-width: 150px;
+  }
+
+  .imageitem img {
+    max-width: 60px;
+    max-height: 60px;
+  }
+
+  .returnbutton {
+    font-size: 14px;
+    padding: 8px 16px;
+  }
 }

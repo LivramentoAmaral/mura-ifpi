@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import style from './style.module.css'; // Use a single styles import
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';   
+
 
 const AdminPage = ({ onSave, fetchImages, images }) => {
   const [image, setImage] = useState({ file: null, alt: '', text: '', preview: '' });
@@ -102,6 +103,9 @@ const AdminPage = ({ onSave, fetchImages, images }) => {
     }};
 
   return (
+    
+    <div>
+     
     <div className={style.adminpage}>
       <h2>Administração de Imagens</h2>
 
@@ -145,25 +149,34 @@ const AdminPage = ({ onSave, fetchImages, images }) => {
         aria-label="Descrição da imagem"
       />
 
-      {editingImageId ? (
-        <button className={style.btnForm} onClick={handleEdit} disabled={loading}>
-          {loading ? 'Carregando...' : 'Salvar Alterações'}
-        </button>
-      ) : (
-        <button className={style.btnForm} onClick={handleUpload} disabled={loading}>
-          {loading ? 'Carregando...' : 'Enviar Imagem'}
-        </button>
-      )}
-      <Link
+
+<div className={style.div_botoes_enviar_home}>
+
+
+<Link
       to="/apresentar"
-      className={style.btnForm_home}
+      
       onClick={handleClick}
     >
       <button disabled={loading} className={style.btnForm_home}>
         {loading ? 'Carregando...' : 'Apresentar'}
       </button>
     </Link>
+      {editingImageId ? (
+        <button className={style.btnForm_enviar} onClick={handleEdit} disabled={loading}>
+          {loading ? 'Carregando...' : 'Salvar Alterações'}
+        </button>
+      ) : (
+        <button className={style.btnForm_enviar} onClick={handleUpload} disabled={loading}>
+          {loading ? 'Carregando...' : 'Enviar Imagem'}
+        </button>
+      )}
+     
+    </div>
 
+
+    </div>
+    <hr></hr>
       <div className={style.imagelist}>
         {images.map((img) => (
           <div key={img.id} className={style.imageitem}>
@@ -188,7 +201,7 @@ const AdminPage = ({ onSave, fetchImages, images }) => {
           </div>
         ))}
       </div>
-    </div>
+      </div>
   );
 };
 

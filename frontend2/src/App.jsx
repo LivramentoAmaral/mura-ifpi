@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import AdminPage from './components/admin/AdminPage';
 import FullScreenCarousel from './components/FullScrem/FullScreenCarousel'; // Importando o componente FullScreenCarousel
 import axios from 'axios';
+import Navbar from './navbar/navbar';
 
 function App() {
   const [images, setImages] = useState([]);
@@ -34,7 +35,15 @@ function App() {
         ) : (
           <Routes>
             {/* Define as rotas para AdminPage e FullScreenCarousel */}
-            <Route path="/" element={<AdminPage onSave={setImages} fetchImages={fetchImages} images={images} />} />
+            <Route
+              path="/"
+              element={
+                <>
+                  <Navbar />
+                  <AdminPage onSave={setImages} fetchImages={fetchImages} images={images} />
+                </>
+              }
+            />
             <Route path="/apresentar" element={<FullScreenCarousel images={images} />} />
           </Routes>
         )}
