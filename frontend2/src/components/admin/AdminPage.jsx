@@ -194,7 +194,7 @@ const AdminPage = ({ onSave, fetchImages, images }) => {
                 Editar
               </button>
 
-              <button onClick={() => handleDelete(img.id)} className={style.btnForm}>
+              <button onClick={() => handleDelete(img.id)} className={style.btnForm_excluir}>
                 Excluir
               </button>
             </div>
