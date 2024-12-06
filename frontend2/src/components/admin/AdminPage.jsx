@@ -3,7 +3,6 @@ import axios from 'axios';
 import style from './style.module.css'; // Use a single styles import
 import { Link } from 'react-router-dom';   
 
-
 const AdminPage = ({ onSave, fetchImages, images }) => {
   const [image, setImage] = useState({ file: null, alt: '', text: '', preview: '' });
   const [editingImageId, setEditingImageId] = useState(null);
@@ -60,6 +59,10 @@ const AdminPage = ({ onSave, fetchImages, images }) => {
   const handleEdit = async () => {
     if (!editingImageId) return;
 
+    // Confirmar antes de salvar as alterações
+    const isConfirmed = window.confirm('Você tem certeza que deseja salvar as alterações?');
+    if (!isConfirmed) return; // Se não confirmar, não prossegue
+
     setLoading(true);
 
     const formData = new FormData();
@@ -92,6 +95,7 @@ const AdminPage = ({ onSave, fetchImages, images }) => {
       setError('Erro ao excluir imagem. Tente novamente.');
     }
   };
+
   const handleClick = (event) => {
     if (loading) {
       event.preventDefault(); // Impede o redirecionamento se estiver carregando
@@ -100,83 +104,74 @@ const AdminPage = ({ onSave, fetchImages, images }) => {
       setTimeout(() => {
         setLoading(false); // Simula o término de uma ação antes de redirecionar
       }, 1000); // Ajuste o tempo conforme necessário
-    }};
+    }
+  };
 
   return (
-    
     <div>
-     
-    <div className={style.adminpage}>
-      <h2>Administração de Imagens</h2>
+      <div className={style.adminpage}>
+        <h2>Administração de Imagens</h2>
 
-      {error && <div className={style.error}>{error}</div>}
+        {error && <div className={style.error}>{error}</div>}
 
-      <div>
+        <div>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange} // Função para mostrar pré-visualização
+            disabled={loading}
+            className={style.inputFile}
+            aria-label="Selecione uma imagem"
+          />
+
+          {/* Exibir a imagem após o usuário selecionar */}
+          {image.preview && (
+            <div className={style.imagePreview}>
+              <img src={image.preview} alt="Pré-visualização" className={style.previewImage} />
+            </div>
+          )}
+        </div>
+
         <input
-          type="file"
-          accept="image/*"
-          onChange={handleImageChange} // Função para mostrar pré-visualização
+          type="text"
+          placeholder="Texto alternativo"
+          value={image.alt}
+          onChange={(e) => setImage({ ...image, alt: e.target.value })}
           disabled={loading}
-          className={style.inputFile}
-          aria-label="Selecione uma imagem"
+          className={style.inputText}
+          aria-label="Texto alternativo da imagem"
         />
 
-        {/* Exibir a imagem após o usuário selecionar */}
-        {image.preview && (
-          <div className={style.imagePreview}>
-            <img src={image.preview} alt="Pré-visualização" className={style.previewImage} />
-          </div>
-        )}
+        <input
+          type="text"
+          placeholder="Descrição"
+          value={image.text}
+          onChange={(e) => setImage({ ...image, text: e.target.value })}
+          disabled={loading}
+          className={style.inputText}
+          aria-label="Descrição da imagem"
+        />
+
+        <div className={style.div_botoes_enviar_home}>
+          <Link to="/apresentar" onClick={handleClick}>
+            <button disabled={loading} className={style.btnForm_home}>
+              {loading ? 'Carregando...' : 'Apresentar'}
+            </button>
+          </Link>
+
+          {editingImageId ? (
+            <button className={style.btnForm_enviar} onClick={handleEdit} disabled={loading}>
+              {loading ? 'Carregando...' : 'Salvar Alterações'}
+            </button>
+          ) : (
+            <button className={style.btnForm_enviar} onClick={handleUpload} disabled={loading}>
+              {loading ? 'Carregando...' : 'Enviar Imagem'}
+            </button>
+          )}
+        </div>
       </div>
 
-      <input
-        type="text"
-        placeholder="Texto alternativo"
-        value={image.alt}
-        onChange={(e) => setImage({ ...image, alt: e.target.value })}
-        disabled={loading}
-        className={style.inputText}
-        aria-label="Texto alternativo da imagem"
-      />
-
-      <input
-        type="text"
-        placeholder="Descrição"
-        value={image.text}
-        onChange={(e) => setImage({ ...image, text: e.target.value })}
-        disabled={loading}
-        className={style.inputText}
-        aria-label="Descrição da imagem"
-      />
-
-
-<div className={style.div_botoes_enviar_home}>
-
-
-<Link
-      to="/apresentar"
-      
-      onClick={handleClick}
-    >
-      <button disabled={loading} className={style.btnForm_home}>
-        {loading ? 'Carregando...' : 'Apresentar'}
-      </button>
-    </Link>
-      {editingImageId ? (
-        <button className={style.btnForm_enviar} onClick={handleEdit} disabled={loading}>
-          {loading ? 'Carregando...' : 'Salvar Alterações'}
-        </button>
-      ) : (
-        <button className={style.btnForm_enviar} onClick={handleUpload} disabled={loading}>
-          {loading ? 'Carregando...' : 'Enviar Imagem'}
-        </button>
-      )}
-     
-    </div>
-
-
-    </div>
-    <hr></hr>
+      <hr />
       <div className={style.imagelist}>
         {images.map((img) => (
           <div key={img.id} className={style.imageitem}>
@@ -187,7 +182,7 @@ const AdminPage = ({ onSave, fetchImages, images }) => {
               <button
                 onClick={() => {
                   setEditingImageId(img.id);
-                  setImage({ file: null, alt: img.alt, text: img.text, preview: '' });
+                  setImage({ file: null, alt: img.alt, text: img.text, preview: `http://localhost:5000${img.src}` });
                 }}
                 className={style.btnForm}
               >
@@ -201,7 +196,7 @@ const AdminPage = ({ onSave, fetchImages, images }) => {
           </div>
         ))}
       </div>
-      </div>
+    </div>
   );
 };
 

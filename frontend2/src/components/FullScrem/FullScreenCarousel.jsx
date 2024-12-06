@@ -14,24 +14,7 @@ const FullScreenCarousel = ({ images }) => {
     document.webkitFullscreenElement ||
     document.msFullscreenElement;
 
-  const enterFullScreen = () => {
-    if (carouselRef.current) {
-      const requestFullscreen =
-        carouselRef.current.requestFullscreen ||
-        carouselRef.current.mozRequestFullScreen ||
-        carouselRef.current.webkitRequestFullscreen ||
-        carouselRef.current.msRequestFullscreen;
-
-      if (requestFullscreen) {
-        requestFullscreen.call(carouselRef.current).catch((err) => {
-          console.error('Error attempting to enable full-screen mode:', err.message);
-        }, []);
-      }
-    }
-  };
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const exitFullScreen = useCallback(() => {
+  const exitFullScreenAndNavigate = useCallback(async () => {
     if (isFullScreenActive()) {
       const exitFullscreen =
         document.exitFullscreen ||
@@ -40,21 +23,54 @@ const FullScreenCarousel = ({ images }) => {
         document.msExitFullscreen;
 
       if (exitFullscreen) {
-        exitFullscreen.call(document).catch((err) => {
-          console.error('Error attempting to exit full-screen mode:', err.message);
-        });
+        try {
+          await exitFullscreen.call(document); // Espera sair da tela cheia
+        } catch (error) {
+          console.error('Erro ao sair do modo tela cheia:', error.message);
+        }
       }
     }
-  });
+    navigate('/'); // Navega para "/" imediatamente após sair do modo tela cheia
+  }, [navigate]);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const nextImage = () => {
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
-  };
+  const handleKeyPress = useCallback(
+    (event) => {
+      if (event.key === 'Escape') {
+        exitFullScreenAndNavigate();
+      }
+    },
+    [exitFullScreenAndNavigate]
+  );
+
+  const enterFullScreen = useCallback(() => {
+    if (carouselRef.current) {
+      const requestFullscreen =
+        carouselRef.current.requestFullscreen ||
+        carouselRef.current.mozRequestFullScreen ||
+        carouselRef.current.webkitRequestFullscreen ||
+        carouselRef.current.msRequestFullscreen;
+
+      if (requestFullscreen) {
+        requestFullscreen.call(carouselRef.current).catch((err) =>
+          console.error('Erro ao entrar no modo tela cheia:', err.message)
+        );
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyPress);
+    return () => {
+      window.removeEventListener('keydown', handleKeyPress);
+    };
+  }, [handleKeyPress]);
 
   useEffect(() => {
     enterFullScreen();
-    const interval = setInterval(nextImage, 5000);
+    const interval = setInterval(() => {
+      setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
+    }, 5000);
+
     const messageTimeout = setTimeout(() => setShowMessage(true), 0);
     const hideMessageTimeout = setTimeout(() => setShowMessage(false), 120000);
 
@@ -63,26 +79,7 @@ const FullScreenCarousel = ({ images }) => {
       clearTimeout(messageTimeout);
       clearTimeout(hideMessageTimeout);
     };
-  }, [images.length, nextImage]);
-
-  const handleCloseClick = () => {
-    exitFullScreen();
-    navigate('/');
-  };
-
-  const handleKeyPress = useCallback((event) => {
-    if (event.key === 'x' || event.key === 'X') {
-      exitFullScreen();
-      navigate('/');
-    }
-  }, [exitFullScreen, navigate]);
-
-  useEffect(() => {
-    window.addEventListener('keydown', handleKeyPress);
-    return () => {
-      window.removeEventListener('keydown', handleKeyPress);
-    };
-  }, [handleKeyPress]);
+  }, [images.length, enterFullScreen]);
 
   return (
     <div ref={carouselRef} className={style.fullscreencarousel}>
@@ -97,7 +94,7 @@ const FullScreenCarousel = ({ images }) => {
       )}
       <button
         className={style.closeButton}
-        onClick={handleCloseClick}
+        onClick={exitFullScreenAndNavigate}
         style={{ position: 'absolute', top: '10px', right: '20px' }}
       >
         X
@@ -118,7 +115,18 @@ const FullScreenCarousel = ({ images }) => {
           Para sair, aperte no ➡️
         </div>
       )}
+
+      <div>
+      <button
+        className={style.sd}
+        onClick={exitFullScreenAndNavigate}
+        style={{ position: 'absolute', button:'40px', color:'red' }}
+      >
+        voltar
+      </button>
+      </div>
     </div>
+    
   );
 };
 
