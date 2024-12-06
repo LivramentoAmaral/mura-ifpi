@@ -46,7 +46,7 @@ const FullScreenCarousel = ({ images }) => {
     const interval = setInterval(nextImage, 5000);
     const messageTimeout = setTimeout(() => {
       setShowMessage(true);
-    }, 3000); // Mostrar a mensagem após 3 segundos
+    },0); // Mostrar a mensagem após 3 segundos
 
     // Timeout para ocultar a mensagem após 2 minutos
     const hideMessageTimeout = setTimeout(() => {
@@ -91,9 +91,7 @@ const FullScreenCarousel = ({ images }) => {
             alt={images[currentIndex].alt}
             className={style.carouselimage}
           />
-          {images[currentIndex].text && (
-            <div className={style.carouseltext}>{images[currentIndex].text}</div>
-          )}
+         
         </div>
       )}
       <button
