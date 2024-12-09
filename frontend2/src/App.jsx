@@ -1,10 +1,12 @@
+/* eslint-disable react/jsx-pascal-case */
 import React, { useState, useEffect } from 'react';
 import './App.css';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import AdminPage from './components/admin/AdminPage';
-import FullScreenCarousel from './components/FullScrem/FullScreenCarousel'; // Importando o componente FullScreenCarousel
+import AdminPage from './pages/admin/AdminPage';
+import FullScreenCarousel from './pages/FullScrem/FullScreenCarousel'; // Importando o componente FullScreenCarousel
 import axios from 'axios';
-import Navbar from './navbar/navbar';
+import Navbar_tudo from './components/navbar/navbar';
+import Agendar from './pages/agendas/agenda'; 
 
 function App() {
   const [images, setImages] = useState([]);
@@ -39,12 +41,19 @@ function App() {
               path="/"
               element={
                 <>
-                  <Navbar />
+                  <Navbar_tudo />
                   <AdminPage onSave={setImages} fetchImages={fetchImages} images={images} />
                 </>
               }
             />
             <Route path="/apresentar" element={<FullScreenCarousel images={images} />} />
+            
+            <Route path="/agendar" element={<><Navbar_tudo /><Agendar /></>} />
+
+   
+
+
+   
           </Routes>
         )}
       </div>

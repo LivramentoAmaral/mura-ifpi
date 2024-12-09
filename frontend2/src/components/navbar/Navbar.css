@@ -1,0 +1,98 @@
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  /* Espaça os itens principais (logo, título, links) */
+  align-items: center;
+  /* Alinha os itens verticalmente */
+  padding: 10px 30px;
+  /* Espaçamento interno */
+  background-color: #022e5d;
+  /* Cor de fundo */
+  color: white;
+  /* Cor do texto */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  /* Sombra */
+  width: 100%;
+  /* Faz a navbar ocupar toda a largura */
+  position: fixed;
+  /* Fixa no topo */
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  /* Garante que a navbar fique acima de outros elementos */
+}
+
+.navbar-logo .logo {
+  max-width: 55px;
+  /* Tamanho máximo do logo */
+  height: auto;
+}
+
+.navbar_title {
+  flex-grow: 1;
+  /* Faz o título ocupar o espaço necessário */
+  text-align: center;
+  /* Centraliza o título horizontalmente */
+}
+
+.title_container {
+  display: flex;
+  /* Coloca os links em linha horizontal */
+  gap: 0px;
+  /* Define 50px de espaçamento entre os links */
+}
+
+.agendar,
+.home_nave {
+  color: #ffffff;
+  /* Cor padrão dos links */
+  text-decoration: none;
+  /* Remove o sublinhado padrão */
+  background-color: #8e949b;
+  padding: 30px 20px;
+ 
+}
+
+.custom-link {
+  color: inherit;
+  /* Herda a cor do elemento pai */
+  text-decoration: none;
+  /* Remove o sublinhado */
+  margin-right: 50px;
+  /* Espaçamento entre os links */
+  transition: color 0.3s ease, text-decoration 0.3s ease;
+  /* Transição suave no hover */
+  font-size: 20px;
+  background-color: #04366b;
+  padding: 30px 20px;
+}
+
+
+.custom-link:hover {
+  color: #f0f0f0;
+  /* Altera a cor no hover */
+  text-decoration: none;
+  /* Adiciona sublinhado no hover */
+  background-color: #022b57;
+  font-size: 19px;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 10px 15px;
+    /* Menos padding em telas pequenas */
+    flex-wrap: wrap;
+    /* Permite que os itens quebrem linha */
+  }
+
+  .navbar_title {
+    margin-bottom: 10px;
+    /* Espaçamento em telas menores */
+  }
+
+  .title_container {
+    gap: 20px;
+    /* Reduz o espaçamento entre links em telas pequenas */
+  }
+}

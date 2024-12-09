@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import style from './style.module.css'; // Use a single styles import
-import { Link } from 'react-router-dom';   
+import { Link } from 'react-router-dom';
 
 const AdminPage = ({ onSave, fetchImages, images }) => {
   const [image, setImage] = useState({ file: null, alt: '', text: '', preview: '' });
@@ -86,13 +86,25 @@ const AdminPage = ({ onSave, fetchImages, images }) => {
     }
   };
 
+  // Função para excluir a imagem com confirmação
   const handleDelete = async (id) => {
-    try {
-      await axios.delete(`http://localhost:5000/images/${id}`);
-      fetchImages(); 
-    } catch (error) {
-      console.error('Erro ao excluir imagem:', error);
-      setError('Erro ao excluir imagem. Tente novamente.');
+    // Exibe uma janela de confirmação antes de excluir
+    const confirmDelete = window.confirm("Tem certeza de que deseja excluir esta imagem?");
+
+    // Se o usuário confirmar a exclusão (clicar em 'OK' ou 'Sim')
+    if (confirmDelete) {
+      try {
+        // Envia a requisição DELETE para o backend
+        await axios.delete(`http://localhost:5000/images/${id}`);
+        // Recarrega as imagens após a exclusão
+        fetchImages();
+      } catch (error) {
+        console.error('Erro ao excluir imagem:', error);
+        setError('Erro ao excluir imagem. Tente novamente.');
+      }
+    } else {
+      // Caso o usuário cancele, nada acontece
+      console.log("Exclusão cancelada");
     }
   };
 
@@ -179,6 +191,9 @@ const AdminPage = ({ onSave, fetchImages, images }) => {
             <p>{img.text}</p>
 
             <div className={style.buttonContainer}>
+              <button onClick={() => handleDelete(img.id)} className={style.btnForm_excluir}>
+                Excluir
+              </button>
               <button
                 onClick={() => {
                   setEditingImageId(img.id);
@@ -189,9 +204,7 @@ const AdminPage = ({ onSave, fetchImages, images }) => {
                 Editar
               </button>
 
-              <button onClick={() => handleDelete(img.id)} className={style.btnForm_excluir}>
-                Excluir
-              </button>
+
             </div>
           </div>
         ))}
