@@ -117,16 +117,16 @@ const FullScreenCarousel = ({ images }) => {
       )}
 
       <div>
-      <button
-        className={style.sd}
-        onClick={exitFullScreenAndNavigate}
-        style={{ position: 'absolute', button:'40px', color:'red' }}
-      >
-        voltar
-      </button>
+        <button
+          className={style.sd}
+          onClick={exitFullScreenAndNavigate}
+          style={{ position: 'absolute', button: '40px', color: 'red' }}
+        >
+          voltar
+        </button>
       </div>
     </div>
-    
+
   );
 };
 

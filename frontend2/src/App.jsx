@@ -6,7 +6,7 @@ import AdminPage from './pages/admin/AdminPage';
 import FullScreenCarousel from './pages/FullScrem/FullScreenCarousel'; // Importando o componente FullScreenCarousel
 import axios from 'axios';
 import Navbar_tudo from './components/navbar/navbar';
-import Agendar from './pages/agendas/agenda'; 
+import Agendar from './pages/agendas/agenda';
 
 function App() {
   const [images, setImages] = useState([]);
@@ -47,13 +47,13 @@ function App() {
               }
             />
             <Route path="/apresentar" element={<FullScreenCarousel images={images} />} />
-            
+
             <Route path="/agendar" element={<><Navbar_tudo /><Agendar /></>} />
 
-   
 
 
-   
+
+
           </Routes>
         )}
       </div>
