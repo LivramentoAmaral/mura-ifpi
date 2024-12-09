@@ -266,18 +266,22 @@ input:focus {
 @media (max-width: 768px) {
   .adminpage {
     padding: 15px;
-    margin-top: 60px;
+    margin-top: 90px;
   }
 
   input,
   .btnForm,
-  .btnForm_home,
-  .btnForm_enviar 
+  .btnForm_home
+  
+
 
   {
     font-size: 14px;
     width: 100%;
     /* Botões ocupam largura total */
+  }.btnForm_home,
+  .btnForm_enviar{
+    width: 100%;
   }
   .btnForm_excluir{
     font-size: 14px;
@@ -302,7 +306,7 @@ input:focus {
   }
 
   .div_botoes_enviar_home {
-    flex-direction: column;
+  
     /* Empilha os itens em telas menores */
     gap: 20px;
   }
@@ -318,12 +322,14 @@ input:focus {
   .adminpage {
     padding: 10px;
     margin: 30px;
+    margin-top: 90px;
   }
 
   .btnForm,
   .btnForm_home,
   .btnForm_enviar,
-  .btnForm_excluir {
+  .btnForm_excluir
+  .btnForm_home {
     padding: 10px 15px;
     font-size: 12px;
   }
@@ -345,7 +351,7 @@ input:focus {
   @media (max-width: 378px) {
     .adminpage {
       padding: 15px;
-      margin-top: 40px;
+      margin-top: 90px;
     }
 
   }
