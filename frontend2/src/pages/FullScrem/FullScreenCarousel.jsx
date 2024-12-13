@@ -74,12 +74,15 @@ const FullScreenCarousel = ({ images }) => {
     const messageTimeout = setTimeout(() => setShowMessage(true), 0);
     const hideMessageTimeout = setTimeout(() => setShowMessage(false), 120000);
 
+    document.addEventListener('keydown', handleKeyPress);
+
     return () => {
       clearInterval(interval);
       clearTimeout(messageTimeout);
       clearTimeout(hideMessageTimeout);
+      document.removeEventListener('keydown', handleKeyPress);
     };
-  }, [images, enterFullScreen]);
+  }, [images, enterFullScreen, handleKeyPress]);
 
   return (
     <div ref={carouselRef} className={style.fullscreencarousel}>
