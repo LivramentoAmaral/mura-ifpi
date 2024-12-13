@@ -7,7 +7,7 @@ const uuid = require('uuid');
 const app = express();
 const PORT = 5000;
 
-app.use(cors());
+app.use(cors()); 
 app.use(express.json());
 
 const storage = multer.diskStorage({
@@ -41,7 +41,8 @@ const loadImagesFromDirectory = () => {
         id: uuid.v4(),
         src: filePath,
         alt: '',
-        text: ''
+        text: '',
+        date: null, // Campo de data opcional
       };
       images.push(image);
     });
@@ -63,6 +64,7 @@ app.post('/upload', upload.single('image'), (req, res) => {
     src: filePath,
     alt: req.body.alt || '',
     text: req.body.text || '',
+    date: req.body.date || null, // Adiciona o campo de data opcional
   };
 
   images.push(newImage);
@@ -74,13 +76,8 @@ app.get('/images', (req, res) => {
 });
 
 app.put('/images/:id', upload.single('image'), async (req, res) => {
-  const {
-    id
-  } = req.params;
-  const {
-    alt,
-    text
-  } = req.body;
+  const { id } = req.params;
+  const { alt, text, date } = req.body;
 
   const image = images.find((img) => img.id === id);
   if (!image) {
@@ -106,14 +103,13 @@ app.put('/images/:id', upload.single('image'), async (req, res) => {
 
   image.alt = alt || image.alt;
   image.text = text || image.text;
+  image.date = date || image.date; // Atualiza o campo de data
 
   res.status(200).json(image);
 });
 
 app.delete('/images/:id', (req, res) => {
-  const {
-    id
-  } = req.params;
+  const { id } = req.params;
 
   const imageIndex = images.findIndex((img) => img.id === id);
   if (imageIndex === -1) {

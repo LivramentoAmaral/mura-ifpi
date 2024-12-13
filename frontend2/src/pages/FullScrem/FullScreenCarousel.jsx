@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 const FullScreenCarousel = ({ images }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [filteredImages, setFilteredImages] = useState([]);
   const [showMessage, setShowMessage] = useState(false);
   const carouselRef = useRef(null);
   const navigate = useNavigate();
@@ -24,13 +25,13 @@ const FullScreenCarousel = ({ images }) => {
 
       if (exitFullscreen) {
         try {
-          await exitFullscreen.call(document); // Espera sair da tela cheia
+          await exitFullscreen.call(document);
         } catch (error) {
           console.error('Erro ao sair do modo tela cheia:', error.message);
         }
       }
     }
-    navigate('/'); // Navega para "/" imediatamente após sair do modo tela cheia
+    navigate('/');
   }, [navigate]);
 
   const handleKeyPress = useCallback(
@@ -59,16 +60,15 @@ const FullScreenCarousel = ({ images }) => {
   }, []);
 
   useEffect(() => {
-    window.addEventListener('keydown', handleKeyPress);
-    return () => {
-      window.removeEventListener('keydown', handleKeyPress);
-    };
-  }, [handleKeyPress]);
+    // Filtrar as imagens para exibir apenas as com a data igual ao dia atual
+    const today = new Date().toISOString().split('T')[0];
+    const imagesToday = images.filter((img) => img.date === today);
+    setFilteredImages(imagesToday);
 
-  useEffect(() => {
     enterFullScreen();
+
     const interval = setInterval(() => {
-      setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
+      setCurrentIndex((prevIndex) => (prevIndex + 1) % imagesToday.length);
     }, 5000);
 
     const messageTimeout = setTimeout(() => setShowMessage(true), 0);
@@ -79,18 +79,20 @@ const FullScreenCarousel = ({ images }) => {
       clearTimeout(messageTimeout);
       clearTimeout(hideMessageTimeout);
     };
-  }, [images.length, enterFullScreen]);
+  }, [images, enterFullScreen]);
 
   return (
     <div ref={carouselRef} className={style.fullscreencarousel}>
-      {images.length > 0 && (
+      {filteredImages.length > 0 ? (
         <div className={style.imagecontainer}>
           <img
-            src={`http://localhost:5000${images[currentIndex].src}`}
-            alt={images[currentIndex].alt}
+            src={`http://localhost:5000${filteredImages[currentIndex].src}`}
+            alt={filteredImages[currentIndex].alt}
             className={style.carouselimage}
           />
         </div>
+      ) : (
+        <div className={style.noImagesMessage}>Nenhuma imagem disponível para hoje.</div>
       )}
       <button
         className={style.closeButton}
@@ -115,18 +117,7 @@ const FullScreenCarousel = ({ images }) => {
           Para sair, aperte no ➡️
         </div>
       )}
-
-      <div>
-        <button
-          className={style.sd}
-          onClick={exitFullScreenAndNavigate}
-          style={{ position: 'absolute', button: '40px', color: 'red' }}
-        >
-          voltar
-        </button>
-      </div>
     </div>
-
   );
 };
 
