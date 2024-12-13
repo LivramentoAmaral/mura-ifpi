@@ -1,14 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import style from './style.module.css'; // Use a single styles import
 import { Link } from 'react-router-dom';
 
-const AdminPage = ({ onSave, fetchImages, images }) => {
+const AdminPage = ({ onSave }) => {
   const [image, setImage] = useState({ file: null, alt: '', text: '', date: '', preview: '' });
-  const [editingImageId, setEditingImageId] = useState(null);
+  const [, setEditingImageId] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [images, setImages] = useState([]); // Lista de imagens
 
+  // Buscar imagens ao montar o componente
+  useEffect(() => {
+    const fetchImages = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/images');
+        setImages(response.data); // Atualiza o estado com as imagens recebidas
+      } catch (error) {
+        console.error('Erro ao buscar imagens:', error);
+        setError('Erro ao buscar imagens.');
+      }
+    };
+
+    fetchImages();
+  }, []); // O array vazio [] significa que isso rodará apenas uma vez, quando o componente for montado
+
+  // Handle file input change
   const handleImageChange = (e) => {
     const selectedFile = e.target.files[0];
     if (selectedFile) {
@@ -17,13 +34,14 @@ const AdminPage = ({ onSave, fetchImages, images }) => {
         setImage({
           ...image,
           file: selectedFile,
-          preview: reader.result, // URL da imagem para visualização
+          preview: reader.result, // URL para visualização da imagem
         });
       };
-      reader.readAsDataURL(selectedFile); // Lê a imagem e gera a URL para visualização
+      reader.readAsDataURL(selectedFile); // Lê o arquivo da imagem como URL para pré-visualização
     }
   };
 
+  // Handle image upload
   const handleUpload = async () => {
     if (!image.file || !image.alt || !image.text) {
       setError('Por favor, preencha todos os campos obrigatórios.');
@@ -44,8 +62,11 @@ const AdminPage = ({ onSave, fetchImages, images }) => {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
 
-      fetchImages();
-      setImage({ file: null, alt: '', text: '', date: '', preview: '' }); // Resetar os campos
+      // Recarregar as imagens após o upload
+      const response = await axios.get('http://localhost:5000/images');
+      setImages(response.data);
+
+      setImage({ file: null, alt: '', text: '', date: '', preview: '' }); // Resetar o formulário
       setLoading(false);
     } catch (error) {
       console.error('Erro ao fazer upload:', error);
@@ -54,58 +75,19 @@ const AdminPage = ({ onSave, fetchImages, images }) => {
     }
   };
 
-  const handleEdit = async () => {
-    if (!editingImageId) return;
-
-    const isConfirmed = window.confirm('Você tem certeza que deseja salvar as alterações?');
-    if (!isConfirmed) return;
-
-    setLoading(true);
-
-    const formData = new FormData();
-    if (image.file) formData.append('image', image.file);
-    formData.append('alt', image.alt);
-    formData.append('text', image.text);
-    if (image.date) formData.append('date', image.date);
-
-    try {
-      await axios.put(`http://localhost:5000/images/${editingImageId}`, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
-
-      fetchImages();
-      setEditingImageId(null);
-      setImage({ file: null, alt: '', text: '', date: '', preview: '' });
-      setLoading(false);
-    } catch (error) {
-      console.error('Erro ao editar imagem:', error);
-      setError('Erro ao editar imagem. Tente novamente.');
-      setLoading(false);
-    }
-  };
-
+  // Handle image deletion
   const handleDelete = async (id) => {
     const confirmDelete = window.confirm("Tem certeza de que deseja excluir esta imagem?");
-
     if (confirmDelete) {
       try {
         await axios.delete(`http://localhost:5000/images/${id}`);
-        fetchImages();
+        // Recarregar as imagens após a exclusão
+        const response = await axios.get('http://localhost:5000/images');
+        setImages(response.data);
       } catch (error) {
         console.error('Erro ao excluir imagem:', error);
         setError('Erro ao excluir imagem. Tente novamente.');
       }
-    }
-  };
-
-  const handleClick = (event) => {
-    if (loading) {
-      event.preventDefault();
-    } else {
-      setLoading(true);
-      setTimeout(() => {
-        setLoading(false);
-      }, 1000);
     }
   };
 
@@ -163,54 +145,59 @@ const AdminPage = ({ onSave, fetchImages, images }) => {
         />
 
         <div className={style.div_botoes_enviar_home}>
-          <Link to="/apresentar" onClick={handleClick}>
-            <button disabled={loading} className={style.btnForm_home}>
-              {loading ? 'Carregando...' : 'Apresentar'}
-            </button>
+          <Link to="/apresentar" className={style.btnForm_home}>
+            Apresentar
           </Link>
 
-          {editingImageId ? (
-            <button className={style.btnForm_enviar} onClick={handleEdit} disabled={loading}>
-              {loading ? 'Carregando...' : 'Salvar Alterações'}
-            </button>
-          ) : (
-            <button className={style.btnForm_enviar} onClick={handleUpload} disabled={loading}>
-              {loading ? 'Carregando...' : 'Enviar Imagem'}
-            </button>
-          )}
+          <button
+            className={style.btnForm_enviar}
+            onClick={handleUpload}
+            disabled={loading}
+          >
+            {loading ? 'Carregando...' : 'Enviar Imagem'}
+          </button>
         </div>
       </div>
 
       <hr />
       <div className={style.imagelist}>
-        {images.map((img) => (
-          <div key={img.id} className={style.imageitem}>
-            <img className={style.image} src={`http://localhost:5000${img.src}`} alt={img.alt} width={100} />
-            <p>{img.text}</p>
-            {img.date && <p><strong>Data:</strong> {img.date}</p>}
+        {images.length === 0 ? (
+          <p>Não há imagens para exibir.</p>
+        ) : (
+          images.map((img) => (
+            <div key={img.id} className={style.imageitem}>
+              <img
+                className={style.image}
+                src={`http://localhost:5000${img.src}`}
+                alt={img.alt}
+                width={100}
+              />
+              <p>{img.text}</p>
+              {img.date && <p><strong>Data:</strong> {img.date}</p>}
 
-            <div className={style.buttonContainer}>
-              <button onClick={() => handleDelete(img.id)} className={style.btnForm_excluir}>
-                Excluir
-              </button>
-              <button
-                onClick={() => {
-                  setEditingImageId(img.id);
-                  setImage({
-                    file: null,
-                    alt: img.alt,
-                    text: img.text,
-                    date: img.date || '',
-                    preview: `http://localhost:5000${img.src}`,
-                  });
-                }}
-                className={style.btnForm}
-              >
-                Editar
-              </button>
+              <div className={style.buttonContainer}>
+                <button onClick={() => handleDelete(img.id)} className={style.btnForm_excluir}>
+                  Excluir
+                </button>
+                <button
+                  onClick={() => {
+                    setEditingImageId(img.id);
+                    setImage({
+                      file: null,
+                      alt: img.alt,
+                      text: img.text,
+                      date: img.date || '',
+                      preview: `http://localhost:5000${img.src}`,
+                    });
+                  }}
+                  className={style.btnForm}
+                >
+                  Editar
+                </button>
+              </div>
             </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
     </div>
   );
